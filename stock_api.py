@@ -23,10 +23,10 @@ def calculate_changes(history):
 
     time_frames = {
         "1 Week": 6, 
-        "1 Month": 22,
-        "6 Months": 127,
-        "1 Year": 253,
-        "5 Years": 1265
+        "1 Month": 21,
+        "6 Months": 126,
+        "1 Year": 251,
+        "5 Years": 1256
     }
 
     historical_changes = {}
