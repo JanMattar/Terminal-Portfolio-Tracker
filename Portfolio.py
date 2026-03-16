@@ -1,0 +1,148 @@
+import json
+import os
+from datetime import datetime
+import yfinance as yf
+from ui import print_error, RED, GREEN, RESET
+
+PORTFOLIO_FILE = "Portfolio.json"
+
+def load_ledger():
+    if not os.path.exists(PORTFOLIO_FILE):
+        return []
+    try:
+        with open(PORTFOLIO_FILE, "r") as f:
+            content = f.read().strip()
+            if not content:
+                return []
+            ledger = json.loads(content)
+            # Normalize all tickers to uppercase and save if changed
+            changed = False
+            for tx in ledger:
+                if tx['ticker'] != tx['ticker'].upper():
+                    tx['ticker'] = tx['ticker'].upper()
+                    changed = True
+            if changed:
+                save_ledger(ledger)
+            return ledger
+    except json.JSONDecodeError:
+        return []
+
+def save_ledger(ledger):
+    with open(PORTFOLIO_FILE, "w") as f:
+        json.dump(ledger, f, indent=4)
+
+def buy_stock(ticker, quantity, price):
+    ledger = load_ledger()
+    ledger.append({
+        "timestamp": datetime.now().isoformat(),
+        "action": "BUY",
+        "ticker": ticker.upper(),
+        "quantity": quantity,
+        "price": price
+    })
+    save_ledger(ledger)
+    print(f"{GREEN}Bought {quantity} shares of {ticker.upper()} at ${price:.2f} at a total cost of ${quantity * price:.2f}{RESET}.")
+
+def sell_stock(ticker, quantity, price):
+    ledger = load_ledger()
+    holdings = {}
+    for entry in ledger:
+        holdings[entry['ticker']] = holdings.get(entry['ticker'], 0) + (entry['quantity'] if entry['action'] == 'BUY' else -entry['quantity'])
+    if holdings.get(ticker.upper(), 0) < quantity:
+        print_error(f"Not enough shares to sell. You currently hold {holdings.get(ticker.upper(), 0)} shares of {ticker.upper()}, enter 'PORTFOLIO' to view your holdings.")
+        return
+    ledger.append({
+        "timestamp": datetime.now().isoformat(),
+        "action": "SELL",
+        "ticker": ticker.upper(),
+        "quantity": quantity,
+        "price": price
+    }) 
+    save_ledger(ledger)
+    print(f"{RED}Sold {quantity} shares of {ticker.upper()} at ${price:.2f} for a total of ${quantity * price:.2f}.{RESET}")
+
+def remove_last():
+    ledger = load_ledger()
+    if not ledger:
+        print_error("No transactions to remove.")
+        return
+    removed = ledger.pop()
+    save_ledger(ledger)
+    print(f"{RED}Removed last transaction: {removed['action']} {removed['quantity']} shares of {removed['ticker']} at ${removed['price']:.2f} at a total of ${removed['quantity'] * removed['price']:.2f}$.{RESET}")
+
+def show_history():
+    ledger = load_ledger()
+    if not ledger:
+        print("No transactions found.")
+        return
+    print(f"\n{'--- TRANSACTION HISTORY ---'.center(60)}")
+    print(f" {'Date':^18} {'Action':^8}{'Ticker':^9} {'Shares':^5}  {'Price':^10} {'Total':^8}")
+    print("-" * 64)
+
+    for entry in ledger:
+        date = datetime.fromisoformat(entry["timestamp"])
+        nice_time = date.strftime("%Y-%m-%d %H:%M")
+        total = entry['quantity'] * entry['price']
+        print(f" {nice_time:<20} {entry['action']:<7} {entry['ticker']:<7} {entry['quantity']:<7}  ${entry['price']:<8.2f} ${total:<10.2f}")
+    print("\n")
+def get_current_price(ticker):
+    try:
+        return yf.Ticker(ticker).history(period="1d")['Close'].iloc[-1]
+    except:
+        return None
+
+def show_portfolio():
+    ledger = load_ledger()
+    holdings = {}
+    cost = {}
+    for entry in ledger:
+        if entry['action'] == 'BUY':
+            holdings[entry['ticker']] = holdings.get(entry['ticker'], 0) + entry['quantity']
+            cost[entry['ticker']] = cost.get(entry['ticker'], 0) + (entry['quantity'] * entry['price'])
+        elif entry['action'] == 'SELL':
+            #WE CAN ASSUME THAT THE TICKER IS IN HOLDINGS SINCE WE ARE SELLING (WE CHECK FOR THIS IN THE SELL_STOCK FUNCTION)
+            holdings[entry['ticker']] -= entry['quantity']
+            cost[entry['ticker']] -= (entry['quantity'] * entry['price'])
+
+    #FILTER OUT THE CLOSED POSITIONS - CURRENT HOLDING OBJ = <TICKER>: (QUANTITY, AVG COST)
+    current_holdings = {ticker: (qty, cost/qty) for ticker, (qty, cost) in [(ticker, (holdings[ticker], cost[ticker])) for ticker in holdings if holdings[ticker] > 0]}
+    if not current_holdings:
+        print("No current holdings. Your portfolio is empty.")
+        return
+
+    print(f"\n{'--- PORTFOLIO ---'.center(80)}")
+    print(f" {'Ticker':^7} {'Shares':^7} {'Avg-Cost':^9} {'Current':^7} {'Daily-gain':^12} {'Daily-change':^13} {'All-Time-gain':^14} {'All-Time-change'}")
+    print ("-" * 94)
+    total_profit = 0
+    total_cost = 0
+    for ticker, (qty, avg_cost) in current_holdings.items():
+        current_price = get_current_price(ticker)
+        if current_price:
+            try:
+                history_2d = yf.Ticker(ticker).history(period="2d") 
+                yesterday_price = history_2d['Close'].iloc[-2] if len(history_2d) > 1 else current_price
+                daily_gain = (current_price - yesterday_price) * qty
+                daily_pct = ((current_price - yesterday_price) / yesterday_price) * 100 if yesterday_price > 0 else 0
+            except:
+                daily_gain = 0
+                daily_pct = 0
+            all_time_gain = (current_price - avg_cost) * qty
+            all_time_pct = ((current_price - avg_cost) / avg_cost) * 100 if avg_cost > 0 else 0
+            total_cost += avg_cost * qty
+            total_profit += all_time_gain
+            pnl_color = GREEN if all_time_gain >= 0 else RED
+            daily_color = GREEN if daily_gain >= 0 else RED
+            print(f"  {ticker:<7}{qty:<6}  ${avg_cost:<8.2f} ${current_price:<10.2f}{daily_color}${daily_gain:<12.2f}{RESET}{daily_color}{f'{daily_pct:.2f}%':<15}{RESET}{pnl_color}${all_time_gain:<10.2f}{RESET} {pnl_color}{all_time_pct:>9.2f}%{RESET}")
+        else:
+            print(f"  {ticker:<6}  {qty:<6} ${avg_cost:<10.2f} N/A       N/A          N/A             N/A             N/A")
+    total_color = GREEN if total_profit >= 0 else RED
+    total_value = total_cost + total_profit
+    total_pct = (total_profit / total_cost) * 100 if total_cost > 0 else 0
+    print(f"\nTotal Portfolio value: ${total_value:.2f}  Total Profit: {total_color}${total_profit:.2f} {total_pct:.2f}%{RESET} ")
+    print("\n")
+
+
+
+
+
+

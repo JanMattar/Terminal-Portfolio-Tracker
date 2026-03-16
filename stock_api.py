@@ -6,7 +6,7 @@ def fetch_stock_history(symbol):
     ticker = yf.Ticker(symbol)
     with open(os.devnull, 'w') as devnull:
         with redirect_stderr(devnull), redirect_stdout(devnull):
-            history = ticker.history(period="5y")
+            history = ticker.history(period="10y")
     return history
 
 def calculate_changes(history):
