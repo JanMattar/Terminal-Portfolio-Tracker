@@ -129,7 +129,7 @@ def get_current_price(ticker):
     except:
         return None
 
-def show_portfolio(ai_analysis=False):
+def show_portfolio(ai_analysis=False, benchmark=False):
     ledger = load_ledger()
     holdings = {}
     cost = {}
@@ -199,14 +199,36 @@ def show_portfolio(ai_analysis=False):
     total_daily_color = GREEN if total_daily_gain >= 0 else RED
 
 
-    print(f"\nTotal Portfolio value : ${total_value:.2f}\n")
-    print(f"     Daily Gain       : {total_daily_color}${total_daily_gain:.2f} {total_dailt_pct:.2f}%{RESET}\n")
+    print(f"\nTotal Portfolio value : ${total_value:.2f}")
+    print(f"     Daily Gain       : {total_daily_color}${total_daily_gain:.2f} {total_dailt_pct:.2f}%{RESET}")
     print(f"    Total Profit      : {total_color}${total_profit:.2f} {total_pct:.2f}%{RESET}")
+    print("\n")
+
+    if benchmark and ledger:
+        try:
+            first_date = ledger[0]["timestamp"][:10] 
+            
+            voo_history = yf.Ticker("VOO").history(start=first_date)
+            
+            if not voo_history.empty:
+                voo_old = voo_history['Close'].iloc[0]
+                voo_now = voo_history['Close'].iloc[-1]
+                voo_pct = ((voo_now - voo_old) / voo_old) * 100
+                
+                beat_market = total_pct > voo_pct
+                color = GREEN if beat_market else RED
+                result_text = "BEATING" if beat_market else "TRAILING"
+                
+                print(f"S&P 500 Return (Since {first_date}): {voo_pct:.2f}% | You are {color}{result_text}{RESET} the market.")
+                print("\n")
+            else:
+                print_error("Not enough benchmark data.")
+        except Exception as e:
+            print_error(f"Failed to fetch benchmark data: {e}")
 
     if ai_analysis and total_value > 0:
         analyze_portfolio(ai_allocations_string)
 
-    print("\n")
 
 
 def export_csv():

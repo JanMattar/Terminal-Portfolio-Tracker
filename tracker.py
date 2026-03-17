@@ -56,6 +56,7 @@ if __name__ == "__main__":
                 print(f"\033[93m    {'DIVIDEND <Ticker> <Amount>':<34}{RESET} : Record a dividend payment\n")
                 print(f"\033[93m    {'PORTFOLIO':<34}{RESET} : View current holdings, average cost, and Profit\n")
                 print(f"\033[93m    {'PORTFOLIO -AI':<34}{RESET} : View current holdings, average cost, and Profit + AI Portfolio Analysis\n")
+                print(f"\033[93m    {'PORTFOLIO -VS':<34}{RESET} : View current holdings, average cost, and Profit + Compare vs S&P 500\n")
                 print(f"\033[93m    {'EXPORT':<34}{RESET} : Export transaction history to CSV\n")
                 print(f"\033[93m    {'HISTORY':<34}{RESET} : Show full transaction history\n")
                 print(f"\033[93m    {'HISTORY -<Ticker> [-<Ticker>...]':<34}{RESET} : Filter history by ticker(s)\n")
@@ -99,7 +100,7 @@ if __name__ == "__main__":
                 remove_last()
 
             elif command == "portfolio":
-                show_portfolio("-AI" in args)
+                show_portfolio(ai_analysis="-AI" in args, benchmark="-VS" in args)
 
             elif command == "dividend" and len(args) == 2:
                 ticker, amount = args[0].upper(), round(float(args[1]), 2)
