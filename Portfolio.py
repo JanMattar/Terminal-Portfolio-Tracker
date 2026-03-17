@@ -267,7 +267,7 @@ def export_csv():
                 "ticker": entry["ticker"],
                 "quantity": entry["quantity"],
                 "price": entry["price"],
-                "total": entry["quantity"] * entry["price"]
+                "total": entry["price"] if entry["action"] == "DIVIDEND" else entry["quantity"] * entry["price"]
             })
     print(f"{GREEN}Exported {len(ledger)} transactions to {filename}{RESET}")
 
