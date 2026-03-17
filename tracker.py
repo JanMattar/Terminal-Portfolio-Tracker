@@ -1,5 +1,5 @@
 from stock_api import fetch_stock_history, calculate_changes
-from ui import print_stock_info, print_error
+from ui import print_stock_info, print_error, RESET
 from AI_News import print_news
 from Portfolio import buy_stock, sell_stock, show_history, remove_last, show_portfolio
 
@@ -42,12 +42,26 @@ if __name__ == "__main__":
 
             elif command == "help":
                 header = "AVAILABLE COMMANDS"
-                print(f"\n{header.center(50)}")
+                print(f"\n{header.center(70)}")
                 print("=" * 80)
-                print(f"    {'<symbol>':<20} : Fetch stock information for a given symbol\n")
-                print(f"    {'<symbol> -NEWS':<20} : Fetch news related to the stock\n")
-                print(f"    {'exit/quit/q':<20} : Exit the stock tracker\n")
-                print(f"    {'help':<20} : Display this help message")
+                print(f"\033[93m    {'<Ticker>':<30}{RESET} : Fetch stock information for a ticker\n")
+                print(f"\033[93m    {'<Ticker> -NEWS':<30}{RESET} : Fetch stock info + AI news summary\n")
+                print(f"\033[93m    {'BUY <Ticker> <Amount> <Price>':<30}{RESET} : Add a BUY transaction\n")
+                print(f"\033[93m    {'SELL <Ticker> <Amount> <Price>':<30}{RESET} : Add a SELL transaction\n")
+                print(f"\033[93m    {'PORTFOLIO':<30}{RESET} : Show current holdings and performance\n")
+                print(f"\033[93m    {'HISTORY':<30}{RESET} : Show transaction history\n")
+                print(f"\033[93m    {'REMOVE':<30}{RESET} : Remove last transaction (undo)\n")
+                print(f"\033[93m    {'HELP':<30}{RESET} : Show this help menu\n")
+                print(f"\033[93m    {'EXIT / QUIT / Q':<30}{RESET} : Exit the program\n")
+                print("=" * 80)
+                print("\n    EXAMPLES:")
+                print("     VOO")
+                print("     VOO -NEWS")
+                print("     BUY VOO 1.57 593.32")
+                print("     SELL VOO 0.50 615.10")
+                print("     PORTFOLIO")
+                print("     REMOVE")
+                print("     HISTORY\n")
                 print("=" * 80)
                 print("\n")
 
