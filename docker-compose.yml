@@ -1,0 +1,9 @@
+services:
+  tracker:
+    build: .
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+    volumes:
+      - ./Portfolio.json:/app/Portfolio.json
