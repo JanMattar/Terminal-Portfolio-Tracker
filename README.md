@@ -21,8 +21,9 @@ Run it: python3 tracker.py
 
 ### Available Commands
 
+
 |     Command      |                 Description                     |        Example        |
-|                  |                                                 |                       |
+|------------------|-------------------------------------------------|-----------------------|
 |      `BUY`       |                  Buy shares                     | `BUY VOO 1.57 593.32` |
 |      `SELL`      |                  Sell shares                    | `SELL VOO 0.50 615.10`|
 |    `PORTFOLIO`   | View current holdings, average cost, and profit |      `PORTFOLIO`      |
