@@ -4,6 +4,7 @@ from datetime import datetime
 import yfinance as yf
 from ui import print_error, RED, GREEN, RESET
 import csv
+from AI import analyze_portfolio
 
 PORTFOLIO_FILE = "Portfolio.json"
 
@@ -128,7 +129,7 @@ def get_current_price(ticker):
     except:
         return None
 
-def show_portfolio():
+def show_portfolio(ai_analysis=False):
     ledger = load_ledger()
     holdings = {}
     cost = {}
@@ -165,6 +166,8 @@ def show_portfolio():
     total_profit = 0
     total_cost = 0
     total_daily_gain = 0
+    ai_allocations_string = ""
+
     for ticker, (qty, avg_cost) in current_holdings.items():
         current_price = prices.get(ticker)
         if current_price:
@@ -184,6 +187,7 @@ def show_portfolio():
             pnl_color = GREEN if all_time_gain >= 0 else RED
             daily_color = GREEN if daily_gain >= 0 else RED
             allocation_pct = ((avg_cost * qty) / total_value) * 100 if total_value > 0 else 0
+            ai_allocations_string += f"{ticker}: {allocation_pct:.2f}%, "
             print(f"  {ticker:<7}{qty:<7} ${avg_cost * qty:<7.2f}  ${avg_cost:<10.2f} ${current_price:<14.2f}{daily_color}${daily_gain:<12.2f}{RESET}{daily_color}{f'{daily_pct:.2f}%':<14}{RESET}{pnl_color}${all_time_gain:<8.2f}{RESET} {pnl_color}{all_time_pct:>12.2f}%{RESET} {allocation_pct:>12.2f}%")
         else:
             print(f"  {ticker:<6}  {qty:<8} ${avg_cost * qty:<8.2f} ${avg_cost:<8.2f} N/A       N/A          N/A             N/A             N/A             N/A")
@@ -195,9 +199,12 @@ def show_portfolio():
     total_daily_color = GREEN if total_daily_gain >= 0 else RED
 
 
-    print(f"\nTotal Portfolio value: ${total_value:.2f}")
-    print(f"Daily Gain: {total_daily_color}${total_daily_gain:.2f} {total_dailt_pct:.2f}%{RESET}")
-    print(f"Total Profit: {total_color}${total_profit:.2f} {total_pct:.2f}%{RESET}")
+    print(f"\nTotal Portfolio value : ${total_value:.2f}\n")
+    print(f"     Daily Gain       : {total_daily_color}${total_daily_gain:.2f} {total_dailt_pct:.2f}%{RESET}\n")
+    print(f"    Total Profit      : {total_color}${total_profit:.2f} {total_pct:.2f}%{RESET}")
+
+    if ai_analysis and total_value > 0:
+        analyze_portfolio(ai_allocations_string)
 
     print("\n")
 

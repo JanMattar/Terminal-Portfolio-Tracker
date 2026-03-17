@@ -29,7 +29,8 @@ Run it: python3 tracker.py
 | `BUY` | Buy shares (saved to local ledger) | `BUY VOO 1.57 593.32` |
 | `SELL` | Sell shares | `SELL VOO 0.50 615.10` |
 | `DIVIDEND` | Record a dividend payment | `DIVIDEND VOO 3.50` |
-| `PORTFOLIO` | View current holdings, average cost, and P&L | `PORTFOLIO` |
+| `PORTFOLIO` | View current holdings, average cost, and Profit | `PORTFOLIO` |
+| `PORTFOLIO -AI` | View current holdings, average cost, and Profit + AI Portfolio Analysis | `PORTFOLIO -AI` |
 | `EXPORT` | Export transaction history to CSV | `EXPORT` |
 | `HISTORY` | View all past transactions | `HISTORY` |
 | `HISTORY -<Ticker> [-<Ticker>...]` | Filter history by ticker(s) | `HISTORY -VOO -AAPL` |

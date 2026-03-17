@@ -1,6 +1,6 @@
 from stock_api import fetch_stock_history, calculate_changes
 from ui import print_stock_info, print_error, RESET, draw_1y_chart
-from AI_News import print_news
+from AI import print_news
 from Portfolio import buy_stock, sell_stock, show_history, remove_last, show_portfolio, export_csv, add_dividend
 
 
@@ -38,7 +38,7 @@ if __name__ == "__main__":
             if not parts:
                 continue
             command = parts[0].lower()
-            args = parts[1:] if len(parts) > 1 else []
+            args = [f.upper() for f in parts[1:]] if len(parts) > 1 else []
 
             if command in ['exit', 'quit', 'q']:
                 print("Exiting the stock tracker. Goodbye!")
@@ -54,7 +54,8 @@ if __name__ == "__main__":
                 print(f"\033[93m    {'BUY <Ticker> <Amount> <Price>':<34}{RESET} : Add a BUY transaction\n")
                 print(f"\033[93m    {'SELL <Ticker> <Amount> <Price>':<34}{RESET} : Add a SELL transaction\n")
                 print(f"\033[93m    {'DIVIDEND <Ticker> <Amount>':<34}{RESET} : Record a dividend payment\n")
-                print(f"\033[93m    {'PORTFOLIO':<34}{RESET} : Show holdings + P/L\n")
+                print(f"\033[93m    {'PORTFOLIO':<34}{RESET} : View current holdings, average cost, and Profit\n")
+                print(f"\033[93m    {'PORTFOLIO -AI':<34}{RESET} : View current holdings, average cost, and Profit + AI Portfolio Analysis\n")
                 print(f"\033[93m    {'EXPORT':<34}{RESET} : Export transaction history to CSV\n")
                 print(f"\033[93m    {'HISTORY':<34}{RESET} : Show full transaction history\n")
                 print(f"\033[93m    {'HISTORY -<Ticker> [-<Ticker>...]':<34}{RESET} : Filter history by ticker(s)\n")
@@ -98,7 +99,7 @@ if __name__ == "__main__":
                 remove_last()
 
             elif command == "portfolio":
-                show_portfolio()
+                show_portfolio("-AI" in args)
 
             elif command == "dividend" and len(args) == 2:
                 ticker, amount = args[0].upper(), round(float(args[1]), 2)
