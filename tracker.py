@@ -1,5 +1,5 @@
 from stock_api import fetch_stock_history, calculate_changes
-from ui import print_stock_info, print_error, RESET
+from ui import print_stock_info, print_error, RESET, draw_1y_chart
 from AI_News import print_news
 from Portfolio import buy_stock, sell_stock, show_history, remove_last, show_portfolio, export_csv, add_dividend
 
@@ -7,7 +7,9 @@ from Portfolio import buy_stock, sell_stock, show_history, remove_last, show_por
 def process_input(user_input):
     parts = user_input.split()
     symbol = parts[0].upper()
-    flags = parts[1:] if len(parts) > 1 else []
+
+
+    flags = [f.upper() for f in parts[1:]] if len(parts) > 1 else []
     
     print(f"Fetching stock price for {symbol}...")
     
@@ -18,8 +20,10 @@ def process_input(user_input):
 
     stock_data = calculate_changes(history)
     print_stock_info(symbol, stock_data)
-    NEWS = "-NEWS" == flags[0] if flags else False
-    print_news(NEWS, symbol)
+    if "-CH" in flags:
+        draw_1y_chart(symbol, history)
+    if "-NEWS" in flags:
+        print_news(NEWS, symbol)
 
 if __name__ == "__main__":
     try:
@@ -45,7 +49,8 @@ if __name__ == "__main__":
                 print(f"\n{header.center(70)}")
                 print("=" * 80)
                 print(f"\n\033[93m    {'<Ticker>':<34}{RESET} : Fetch stock information\n")
-                print(f"\033[93m    {'<Ticker> -NEWS':<34}{RESET} : Fetch stock info + AI news summary\n")
+                print(f"\033[93m    {'<Ticker> -NEWS':<34}{RESET} : Get stock info + AI news summary\n")
+                print(f"\033[93m    {'<Ticker> -CH':<34}{RESET} : Get stock info + Plot 1Y chart\n")
                 print(f"\033[93m    {'BUY <Ticker> <Amount> <Price>':<34}{RESET} : Add a BUY transaction\n")
                 print(f"\033[93m    {'SELL <Ticker> <Amount> <Price>':<34}{RESET} : Add a SELL transaction\n")
                 print(f"\033[93m    {'DIVIDEND <Ticker> <Amount>':<34}{RESET} : Record a dividend payment\n")
@@ -59,7 +64,7 @@ if __name__ == "__main__":
                 print("-" * 80)
                 print("\n    EXAMPLES:")
                 print("      VOO")
-                print("      VOO -NEWS")
+                print("      VOO -CH -NEWS")
                 print("      BUY VOO 1.57 593.32")
                 print("      SELL VOO 0.50 615.10")
                 print("      PORTFOLIO")

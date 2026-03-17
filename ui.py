@@ -1,3 +1,5 @@
+import plotext as plt
+
 RED = "\033[91m"
 GREEN = "\033[92m"
 RESET = "\033[0m"
@@ -28,3 +30,22 @@ def print_stock_info(symbol, data):
             print(f"{label:<9}: {formatted_change}")
         else:
             print_error(f"{label:<9}: Not enough historical data")
+    print()
+
+def draw_1y_chart(ticker, history):
+    if history is None or history.empty:
+        return
+
+    recent_history = history.tail(252)
+    dates = recent_history.index.strftime('%d/%m/%Y').tolist()
+    prices = recent_history['Close'].tolist()
+
+    plt.clf()
+    plt.theme('clear')
+    plt.plot(dates, prices, color='cyan')
+    plt.title(f"{ticker.upper()} - 1 Year Performance")
+    plt.plotsize(150, 25)
+
+    print()
+    plt.show()
+    print()
