@@ -21,8 +21,8 @@ def print_stock_info(symbol, data):
     current_price = data["current_price"]
     daily_change = format_percentage(data["daily_change"])
 
-    print(f"\n--- {symbol.upper()} ---")
-    print(f"Price: ${current_price:.2f}   [{daily_change}]")
+    print(f"\n{'--- ' + symbol.upper() + ' ---':^14}")
+    print(f"{'Price: $' + f'{current_price:.2f}':<15} [{daily_change}]")
 
     for label, change in data["historical_changes"].items():
         if change is not None:

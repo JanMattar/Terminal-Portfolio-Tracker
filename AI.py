@@ -31,8 +31,8 @@ def get_news_rss(symbol):
         print_error(f"RSS fetch failed: {e}")
         return []
 
-def print_news(NEWS, symbol=None):
-    if not NEWS or not symbol:
+def print_news(symbol=None):
+    if not symbol:
         return
     
     try:
@@ -50,13 +50,13 @@ def print_news(NEWS, symbol=None):
             prompt = f"Based on this recent news for {symbol.upper()}:\n{news_summary}\n\nProvide a brief, concise explanation (under 100 words) why the stock is moving today."
             response = client.models.generate_content_stream(model="gemini-2.5-flash-lite", contents=prompt)
             
-            print(f"\n--- {symbol.upper()} NEWS ---")
+            print(f"--- {symbol.upper()} NEWS ---".center(150))
             for chunk in response:
                 print(chunk.text, end="", flush=True) 
             print() 
 
         else:
-            print(f"\n--- {symbol.upper()} NEWS ---")
+            print(f"--- {symbol.upper()} NEWS ---".center(150))
             print("No recent news headlines available to analyze.")
             
     except Exception as e:

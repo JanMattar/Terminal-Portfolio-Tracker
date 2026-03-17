@@ -23,7 +23,7 @@ def process_input(user_input):
     if "-CH" in flags:
         draw_1y_chart(symbol, history)
     if "-NEWS" in flags:
-        print_news(NEWS, symbol)
+        print_news(symbol)
 
 if __name__ == "__main__":
     try:
