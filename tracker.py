@@ -69,7 +69,7 @@ if __name__ == "__main__":
                 print("      VOO -CH -NEWS")
                 print("      BUY VOO 1.57 593.32")
                 print("      SELL VOO 0.50 615.10")
-                print("      PORTFOLIO")
+                print("      PORTFOLIO -AI -VS")
                 print("      EXPORT")
                 print("      HISTORY")
                 print("      HISTORY -VOO")
