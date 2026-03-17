@@ -158,10 +158,11 @@ def show_portfolio(ai_analysis=False, benchmark=False):
         elif entry['action'] == 'DIVIDEND':
             dividends[ticker] = dividends.get(ticker, 0) + entry['price']
 
-    current_holdings = {ticker: (qty, avg_costs[ticker]) for ticker, qty in holdings.items() if qty > 0}
-    if not current_holdings:
-        print("No current holdings. Your portfolio is empty.")
+    if not ledger:
+        print("No transactions yet. Your portfolio is empty.")
         return
+    
+    current_holdings = {ticker: (qty, avg_costs[ticker]) for ticker, qty in holdings.items() if qty > 0}
 
     prices = {}
     total_value = 0
@@ -172,8 +173,11 @@ def show_portfolio(ai_analysis=False, benchmark=False):
             total_value += price * qty
 
     print(f"\n{'--- PORTFOLIO ---'.center(120)}")
-    print(f" {'Ticker':^7} {'Shares':^6} {'Holdings':^10} {'Avg-Cost':^9} {'Current-Price':^13} {'Daily-gain':^12} {'Daily-change':^13} {'All-Time-gain':^14} {'All-Time-change':^16} {'Allocation':^11}")
-    print ("-" * 125)
+    if not current_holdings:
+        print(f"{'No active positions. All holdings have been sold.':^120}\n")
+    else:
+        print(f" {'Ticker':^7} {'Shares':^6} {'Holdings':^10} {'Avg-Cost':^9} {'Current-Price':^13} {'Daily-gain':^12} {'Daily-change':^13} {'All-Time-gain':^14} {'All-Time-change':^16} {'Allocation':^11}")
+        print ("-" * 125)
     total_profit = 0
     total_cost = 0
     total_daily_gain = 0
