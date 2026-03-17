@@ -136,6 +136,7 @@ def show_portfolio(ai_analysis=False, benchmark=False):
     dividends = {}
 
     avg_costs = {}
+    realized_profits = {} 
     for entry in ledger:
         ticker = entry['ticker']
         if entry['action'] == 'BUY':
@@ -150,11 +151,13 @@ def show_portfolio(ai_analysis=False, benchmark=False):
             
         elif entry['action'] == 'SELL':
             holdings[ticker] -= entry['quantity']
+
+            profit_on_sale = (entry['price'] - avg_costs[ticker]) * entry['quantity']
+            realized_profits[ticker] = realized_profits.get(ticker, 0) + profit_on_sale
             
         elif entry['action'] == 'DIVIDEND':
             dividends[ticker] = dividends.get(ticker, 0) + entry['price']
 
-    # Create the current_holdings dictionary using the new avg_costs map
     current_holdings = {ticker: (qty, avg_costs[ticker]) for ticker, qty in holdings.items() if qty > 0}
     if not current_holdings:
         print("No current holdings. Your portfolio is empty.")
@@ -187,7 +190,7 @@ def show_portfolio(ai_analysis=False, benchmark=False):
             except:
                 daily_gain = 0
                 daily_pct = 0
-            all_time_gain = (current_price - avg_cost) * qty + dividends.get(ticker, 0)
+            all_time_gain = (current_price - avg_cost) * qty + dividends.get(ticker, 0) + realized_profits.get(ticker, 0)
             all_time_pct = ((current_price - avg_cost) / avg_cost) * 100 if avg_cost > 0 else 0
             total_cost += avg_cost * qty
             total_profit += all_time_gain
@@ -200,6 +203,10 @@ def show_portfolio(ai_analysis=False, benchmark=False):
         else:
             print(f"  {ticker:<6}  {qty:<8} ${avg_cost * qty:<8.2f} ${avg_cost:<8.2f} N/A       N/A          N/A             N/A             N/A             N/A")
     
+    for ticker, qty in holdings.items():
+        if qty == 0:
+            total_profit += realized_profits.get(ticker, 0) + dividends.get(ticker, 0)
+
     total_color = GREEN if total_profit >= 0 else RED
     total_value = total_cost + total_profit
     total_pct = (total_profit / total_cost) * 100 if total_cost > 0 else 0
