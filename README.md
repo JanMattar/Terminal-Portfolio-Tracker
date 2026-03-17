@@ -12,13 +12,17 @@ Live Prices & Terminal Charts: Uses yfinance to grab live market data and histor
 
 News & AI Advisor (Gemini): Bypasses web scrapers by pulling directly from Yahoo’s official RSS XML feed. Headlines are streamed through Google's gemini-2.5-flash-lite model for a quick summary of why a stock is moving. It also features a Portfolio Advisor that analyzes your live allocations to provide instant, professional critiques on diversification and risk.
 
-### Quick Start
+Containerized Environment: Fully Dockerized for a seamless experience across any operating system without polluting your local Python environment.
 
-Install dependencies: pip install yfinance google-genai python-dotenv plotext
+### Quick Start
 
 Add your key: Create a .env file and add GEMINI_API_KEY=your_key_here
 
-Run it: python3 tracker.py
+Run it: Make sure Docker is installed, then run `docker compose run tracker`
+
+### Troubleshooting
+
+Permission Denied (Linux/WSL): If you get a Docker permission error, run `sudo docker compose run tracker`.
 
 ### Available Commands
 
