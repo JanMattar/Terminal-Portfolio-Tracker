@@ -34,19 +34,29 @@ def save_ledger(ledger):
     with open(PORTFOLIO_FILE, "w") as f:
         json.dump(ledger, f, indent=4)
 
-def buy_stock(ticker, quantity, price):
+def buy_stock(ticker, quantity, price, date_str=None):
     ledger = load_ledger()
+    if date_str:
+        try:
+            datetime.strptime(date_str, "%Y-%m-%d")
+        except ValueError:
+            print_error("Invalid date format. Use YYYY-MM-DD (e.g., 2025-01-15)")
+            return
+        timestamp = f"{date_str}T12:00:00.000000"
+    else:
+        timestamp = datetime.now().isoformat()
     ledger.append({
-        "timestamp": datetime.now().isoformat(),
+        "timestamp": timestamp,
         "action": "BUY",
         "ticker": ticker.upper(),
         "quantity": quantity,
         "price": price
     })
     save_ledger(ledger)
-    print(f"{GREEN}Bought {quantity} shares of {ticker.upper()} at ${price:.2f} at a total cost of ${quantity * price:.2f}{RESET}.")
+    date_display = date_str if date_str else datetime.now().strftime("%Y-%m-%d")
+    print(f"{GREEN}Bought {quantity} shares of {ticker.upper()} at ${price:.2f} at a total cost of ${quantity * price:.2f} (Date: {date_display}){RESET}.")
 
-def sell_stock(ticker, quantity, price):
+def sell_stock(ticker, quantity, price, date_str=None):
     ledger = load_ledger()
     holdings = {}
     for entry in ledger:
@@ -54,15 +64,25 @@ def sell_stock(ticker, quantity, price):
     if holdings.get(ticker.upper(), 0) < quantity:
         print_error(f"Not enough shares to sell. You currently hold {holdings.get(ticker.upper(), 0)} shares of {ticker.upper()}, enter 'PORTFOLIO' to view your holdings.")
         return
+    if date_str:
+        try:
+            datetime.strptime(date_str, "%Y-%m-%d")
+        except ValueError:
+            print_error("Invalid date format. Use YYYY-MM-DD (e.g., 2025-01-15)")
+            return
+        timestamp = f"{date_str}T12:00:00.000000"
+    else:
+        timestamp = datetime.now().isoformat()
     ledger.append({
-        "timestamp": datetime.now().isoformat(),
+        "timestamp": timestamp,
         "action": "SELL",
         "ticker": ticker.upper(),
         "quantity": quantity,
         "price": price
     }) 
     save_ledger(ledger)
-    print(f"{RED}Sold {quantity} shares of {ticker.upper()} at ${price:.2f} for a total of ${quantity * price:.2f}.{RESET}")
+    date_display = date_str if date_str else datetime.now().strftime("%Y-%m-%d")
+    print(f"{RED}Sold {quantity} shares of {ticker.upper()} at ${price:.2f} for a total of ${quantity * price:.2f} (Date: {date_display}){RESET}")
 
 def add_dividend(ticker, amount):
     ledger = load_ledger()
@@ -235,7 +255,7 @@ def show_portfolio(ai_analysis=False, benchmark=False):
 
     if benchmark and ledger:
         try:
-            first_date = ledger[0]["timestamp"][:10] 
+            first_date = min(entry["timestamp"][:10] for entry in ledger)
             
             voo_history = yf.Ticker("VOO").history(start=first_date)
             

@@ -51,8 +51,8 @@ if __name__ == "__main__":
                 print(f"\n\033[93m    {'<Ticker>':<34}{RESET} : Fetch stock information\n")
                 print(f"\033[93m    {'<Ticker> -NEWS':<34}{RESET} : Get stock info + AI news summary\n")
                 print(f"\033[93m    {'<Ticker> -CH':<34}{RESET} : Get stock info + Plot 1Y chart\n")
-                print(f"\033[93m    {'BUY <Ticker> <Amount> <Price>':<34}{RESET} : Add a BUY transaction\n")
-                print(f"\033[93m    {'SELL <Ticker> <Amount> <Price>':<34}{RESET} : Add a SELL transaction\n")
+                print(f"\033[93m    {'BUY <Ticker> <Amt> <Price> [Date]':<34}{RESET} : Add a BUY transaction (Date: YYYY-MM-DD, optional)\n")
+                print(f"\033[93m    {'SELL <Ticker> <Amt> <Price> [Date]':<34}{RESET} : Add a SELL transaction (Date: YYYY-MM-DD, optional)\n")
                 print(f"\033[93m    {'DIVIDEND <Ticker> <Amount>':<34}{RESET} : Record a dividend payment\n")
                 print(f"\033[93m    {'PORTFOLIO':<34}{RESET} : View current holdings, average cost, and Profit\n")
                 print(f"\033[93m    {'PORTFOLIO -AI':<34}{RESET} : View current holdings, average cost, and Profit + AI Portfolio Analysis\n")
@@ -67,8 +67,9 @@ if __name__ == "__main__":
                 print("\n    EXAMPLES:")
                 print("      VOO")
                 print("      VOO -CH -NEWS")
-                print("      BUY VOO 1.57 593.32")
+                print("      BUY VOO 1.57 593.32 2025-01-15")
                 print("      SELL VOO 0.50 615.10")
+                print("      SELL VOO 0.50 615.10 2025-06-01")
                 print("      PORTFOLIO -AI -VS")
                 print("      EXPORT")
                 print("      HISTORY")
@@ -79,24 +80,26 @@ if __name__ == "__main__":
                 print()
 
             elif command == "buy":
-                if len(args) != 3:
-                    print_error("Invalid input for BUY command. Usage: BUY <Ticker> <Amount> <Price> | Example: BUY VOO 1.57 593.32")
+                if len(args) not in [3, 4]:
+                    print_error("Usage: BUY <Ticker> <Amount> <Price> [YYYY-MM-DD] | Example: BUY VOO 1.57 593.32 2025-01-15")
                     continue
                 try:
                     ticker, qty, price = args[0], round(float(args[1]), 4), round(float(args[2]), 2)
-                    buy_stock(ticker, qty, price)
+                    date_str = args[3] if len(args) == 4 else None
+                    buy_stock(ticker, qty, price, date_str)
                 except ValueError:
-                    print_error("Invalid input for BUY command. Usage: BUY <Ticker> <Amount> <Price> | Example: BUY VOO 1.57 593.32")
+                    print_error("Usage: BUY <Ticker> <Amount> <Price> [YYYY-MM-DD] | Example: BUY VOO 1.57 593.32 2025-01-15")
 
             elif command == "sell":
-                if len(args) != 3:
-                    print_error("Invalid input for SELL command. Usage: SELL <Ticker> <Amount> <Price> | Example: SELL VOO 0.50 615.10")
+                if len(args) not in [3, 4]:
+                    print_error("Usage: SELL <Ticker> <Amount> <Price> [YYYY-MM-DD] | Example: SELL VOO 0.50 615.10 2025-06-01")
                     continue
                 try:
                     ticker, qty, price = args[0], round(float(args[1]), 4), round(float(args[2]), 2)
-                    sell_stock(ticker, qty, price)
+                    date_str = args[3] if len(args) == 4 else None
+                    sell_stock(ticker, qty, price, date_str)
                 except ValueError:
-                    print_error("Invalid input for SELL command. Usage: SELL <Ticker> <Amount> <Price> | Example: SELL VOO 0.50 615.10")
+                    print_error("Usage: SELL <Ticker> <Amount> <Price> [YYYY-MM-DD] | Example: SELL VOO 0.50 615.10 2025-06-01")
 
             elif command == "dividend":
                 if len(args) != 2:

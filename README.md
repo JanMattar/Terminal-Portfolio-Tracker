@@ -41,8 +41,8 @@ docker compose run tracker
 | `<Ticker>` | Get current price and historical performance | `VOO` |
 | `<Ticker> -NEWS` | Get stock info + AI news summary | `VOO -NEWS` |
 | `<Ticker> -CH` | Get stock info + Plot 1Y Chart | `VOO -CH` |
-| `BUY` | Buy shares (saved to local ledger) | `BUY VOO 1.57 593.32` |
-| `SELL` | Sell shares | `SELL VOO 0.50 615.10` |
+| `BUY <Ticker> <Amt> <Price> [Date]` | Add a BUY transaction (Date: YYYY-MM-DD, optional) | `BUY VOO 1.57 593.32 2025-01-15` |
+| `SELL <Ticker> <Amt> <Price> [Date]` | Add a SELL transaction (Date: YYYY-MM-DD, optional) | `SELL VOO 0.50 615.10 2025-06-01` |
 | `DIVIDEND` | Record a dividend payment | `DIVIDEND VOO 3.50` |
 | `PORTFOLIO` | View current holdings, average cost, and Profit | `PORTFOLIO` |
 | `PORTFOLIO -AI` | View current holdings, average cost, and Profit + AI Portfolio Analysis | `PORTFOLIO -AI` |
