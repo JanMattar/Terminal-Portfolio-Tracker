@@ -298,11 +298,12 @@ def show_portfolio(ai_analysis=False, benchmark=False, chart=False):
         except Exception as e:
             print_error(f"Failed to fetch benchmark data: {e}")
 
+    if chart:
+        draw_allocation_chart(chart_tickers, chart_allocations)
+        
     if ai_analysis and total_value > 0:
         analyze_portfolio(ai_allocations_string)
     
-    if chart:
-        draw_allocation_chart(chart_tickers, chart_allocations)
 
 
 
