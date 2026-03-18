@@ -30,6 +30,7 @@ def load_ledger():
         return []
 
 def save_ledger(ledger):
+    os.makedirs(os.path.dirname(PORTFOLIO_FILE), exist_ok=True)
     with open(PORTFOLIO_FILE, "w") as f:
         json.dump(ledger, f, indent=4)
 
