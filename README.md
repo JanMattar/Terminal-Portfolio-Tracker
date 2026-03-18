@@ -47,6 +47,7 @@ docker compose run tracker
 | `PORTFOLIO` | View current holdings, average cost, and Profit | `PORTFOLIO` |
 | `PORTFOLIO -AI` | View current holdings, average cost, and Profit + AI Portfolio Analysis | `PORTFOLIO -AI` |
 | `PORTFOLIO -VS` | View current holdings, average cost, and Profit + Compare vs S&P 500 | `PORTFOLIO -VS` |
+| `PORTFOLIO -CH` | View current holdings, average cost, and Profit + Allocation Chart | `PORTFOLIO -CH` |
 | `EXPORT` | Export transaction history to CSV | `EXPORT` |
 | `HISTORY` | View all past transactions | `HISTORY` |
 | `HISTORY <Ticker> [<Ticker>...]` | Filter history by ticker(s) | `HISTORY VOO AAPL` |

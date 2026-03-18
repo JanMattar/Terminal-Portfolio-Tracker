@@ -45,7 +45,7 @@ def draw_1y_chart(ticker, history):
     plt.theme('clear')
     plt.plot(dates, prices, color='cyan')
     plt.title(f"{ticker.upper()} - 1 Year Performance")
-    plt.plotsize(150, 25)
+    plt.plotsize(100, 25)
 
     print()
     plt.show()

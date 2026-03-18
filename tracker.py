@@ -57,6 +57,7 @@ if __name__ == "__main__":
                 print(f"{YELLOW}    {'PORTFOLIO':<34}{RESET} : View current holdings, average cost, and Profit\n")
                 print(f"{YELLOW}    {'PORTFOLIO -AI':<34}{RESET} : View current holdings, average cost, and Profit + AI Portfolio Analysis\n")
                 print(f"{YELLOW}    {'PORTFOLIO -VS':<34}{RESET} : View current holdings, average cost, and Profit + Compare vs S&P 500\n")
+                print(f"{YELLOW}    {'PORTFOLIO -CH':<34}{RESET} : View current holdings, average cost, and Profit + Allocation Chart\n")
                 print(f"{YELLOW}    {'EXPORT':<34}{RESET} : Export transaction history to CSV\n")
                 print(f"{YELLOW}    {'HISTORY':<34}{RESET} : Show full transaction history\n")
                 print(f"{YELLOW}    {'HISTORY <Ticker> [<Ticker>...]':<34}{RESET} : Filter history by ticker(s)\n")
@@ -70,7 +71,8 @@ if __name__ == "__main__":
                 print("      BUY VOO 1.57 593.32 2025-01-15")
                 print("      SELL VOO 0.50 615.10")
                 print("      SELL VOO 0.50 615.10 2025-06-01")
-                print("      PORTFOLIO -AI -VS")
+                print("      PORTFOLIO")
+                print("      PORTFOLIO -AI -VS -CH")
                 print("      EXPORT")
                 print("      HISTORY")
                 print("      HISTORY VOO")
@@ -123,7 +125,7 @@ if __name__ == "__main__":
                 remove_last()
 
             elif command == "portfolio":
-                show_portfolio(ai_analysis="-AI" in args, benchmark="-VS" in args)
+                show_portfolio(ai_analysis="-AI" in args, benchmark="-VS" in args, chart="-CH" in args)
             
             elif command == "export":
                 export_csv()
