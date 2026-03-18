@@ -175,9 +175,18 @@ def show_portfolio(ai_analysis=False, benchmark=False):
     print(f"\n{'--- PORTFOLIO ---'.center(120)}")
     if not current_holdings:
         print(f"{'No active positions. All holdings have been sold.':^120}\n")
-    else:
-        print(f" {'Ticker':^7} {'Shares':^6} {'Holdings':^10} {'Avg-Cost':^9} {'Current-Price':^13} {'Daily-gain':^12} {'Daily-change':^13} {'All-Time-gain':^14} {'All-Time-change':^16} {'Allocation':^11}")
-        print ("-" * 125)
+        total_profit = 0
+        for ticker, qty in holdings.items():
+            if qty == 0:
+                total_profit += realized_profits.get(ticker, 0) + dividends.get(ticker, 0)
+        if total_profit != 0:
+            total_color = GREEN if total_profit >= 0 else RED
+            print(f"\n    Total Realized Profit: {total_color}${total_profit:.2f}{RESET}")
+        print("\n")
+        return
+
+    print(f" {'Ticker':^7} {'Shares':^6} {'Holdings':^10} {'Avg-Cost':^9} {'Current-Price':^13} {'Daily-gain':^12} {'Daily-change':^13} {'All-Time-gain':^14} {'All-Time-change':^16} {'Allocation':^11}")
+    print ("-" * 125)
     total_profit = 0
     total_cost = 0
     total_daily_gain = 0
@@ -203,7 +212,7 @@ def show_portfolio(ai_analysis=False, benchmark=False):
             daily_color = GREEN if daily_gain >= 0 else RED
             allocation_pct = ((avg_cost * qty) / total_value) * 100 if total_value > 0 else 0
             ai_allocations_string += f"{ticker}: {allocation_pct:.2f}%, "
-            print(f"  {ticker:<7}{qty:<7} ${avg_cost * qty:<7.2f}  ${avg_cost:<10.2f} ${current_price:<14.2f}{daily_color}${daily_gain:<12.2f}{RESET}{daily_color}{f'{daily_pct:.2f}%':<14}{RESET}{pnl_color}${all_time_gain:<8.2f}{RESET} {pnl_color}{all_time_pct:>12.2f}%{RESET} {allocation_pct:>12.2f}%")
+            print(f"  {ticker:<7}{qty:<7.4f} ${avg_cost * qty:<7.2f}  ${avg_cost:<10.2f} ${current_price:<14.2f}{daily_color}${daily_gain:<12.2f}{RESET}{daily_color}{f'{daily_pct:.2f}%':<14}{RESET}{pnl_color}${all_time_gain:<8.2f}{RESET} {pnl_color}{all_time_pct:>12.2f}%{RESET} {allocation_pct:>12.2f}%")
         else:
             print(f"  {ticker:<6}  {qty:<8} ${avg_cost * qty:<8.2f} ${avg_cost:<8.2f} N/A       N/A          N/A             N/A             N/A             N/A")
     
