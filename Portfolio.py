@@ -266,7 +266,7 @@ def show_portfolio(ai_analysis=False, benchmark=False, chart=False):
             total_profit += realized_profits.get(ticker, 0) + dividends.get(ticker, 0)
 
     total_color = GREEN if total_profit >= 0 else RED
-    total_value = total_cost + total_profit
+    total_value += sum(dividends.values())
     total_pct = (total_profit / total_cost) * 100 if total_cost > 0 else 0
     total_daily_pct = (total_daily_gain / (total_value - total_daily_gain)) * 100 if (total_value - total_daily_gain) > 0 else 0
     total_daily_color = GREEN if total_daily_gain >= 0 else RED
